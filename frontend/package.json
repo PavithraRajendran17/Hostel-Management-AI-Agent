@@ -1,6 +1,7 @@
 {
   "name": "hostel-management-frontend",
   "version": "1.0.0",
+  "type": "module",
   "description": "React Frontend for Hostel Management AI Agent",
   "private": true,
   "dependencies": {
