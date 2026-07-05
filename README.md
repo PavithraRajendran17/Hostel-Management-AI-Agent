@@ -5,6 +5,9 @@
 
 ---
 
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen.svg)](https://hostel-management-frontend-hzti.onrender.com)
+
+
 # 📂 Project Structure
 
 ```text
