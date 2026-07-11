@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { User, Shield, GraduationCap, Lock, ArrowRight, MessageSquare, FileText, Calendar, CheckCircle } from 'lucide-react'
+import { Building2, ArrowRight, MessageSquare, FileText, Calendar, Bot } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { mockAuthService } from '../services/mockService'
 
@@ -19,10 +19,10 @@ export default function Login() {
   ]
 
   const features = [
-    { icon: MessageSquare, title: 'AI Assistant', description: 'Smart chatbot for instant help' },
-    { icon: FileText, title: 'Complaint Management', description: 'Easy complaint tracking' },
-    { icon: Calendar, title: 'Leave Management', description: 'Quick leave requests' },
-    { icon: CheckCircle, title: 'Secure Login', description: 'Safe authentication' }
+    { icon: Building2, title: 'Smart Hostel Management', description: 'Efficient hostel operations' },
+    { icon: FileText, title: 'Complaint Management', description: 'Track and resolve issues' },
+    { icon: Calendar, title: 'Leave Requests', description: 'Quick approval process' },
+    { icon: Bot, title: 'AI Assistant', description: '24/7 intelligent support' }
   ]
 
   const handleLogin = async (e) => {
@@ -62,21 +62,23 @@ export default function Login() {
       <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: 'url("https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80")'
+          backgroundImage: 'url("https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80")',
+          filter: 'blur(2px)'
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-indigo-900/50" />
+        <div className="absolute inset-0 bg-blue-900/45" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-[430px]">
           {/* Glass Login Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="glass rounded-3xl p-8 shadow-2xl"
+            whileHover={{ y: -5 }}
+            className="bg-white/95 backdrop-blur-xl rounded-[24px] p-8 shadow-2xl"
           >
             {/* Logo */}
             <div className="text-center mb-8">
@@ -84,18 +86,18 @@ export default function Login() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl mb-4 shadow-xl"
+                className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-royal-500 to-royal-600 rounded-full mb-4 shadow-lg"
               >
-                <User className="w-10 h-10 text-white" />
+                <Building2 className="w-8 h-8 text-white" />
               </motion.div>
-              <h1 className="text-3xl font-bold text-white mb-2">Hostel Management AI Agent</h1>
-              <p className="text-gray-300">Smart Hostel Management System</p>
+              <h1 className="text-2xl font-bold text-[#1E293B] mb-2">Hostel Management AI Agent</h1>
+              <p className="text-sm text-gray-500">Smart • Secure • Simple</p>
             </div>
 
             {/* Login Form */}
             <form onSubmit={handleLogin} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-200 mb-2">
+                <label className="block text-sm font-medium text-[#1E293B] mb-2">
                   Username
                 </label>
                 <input
@@ -103,13 +105,13 @@ export default function Login() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
-                  className="w-full px-5 py-3 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-5 py-3.5 bg-white border border-gray-200 rounded-xl text-[#1E293B] placeholder-gray-400 focus:ring-2 focus:ring-royal-500 focus:border-transparent outline-none transition-all"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-200 mb-2">
+                <label className="block text-sm font-medium text-[#1E293B] mb-2">
                   Password
                 </label>
                 <input
@@ -117,24 +119,24 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full px-5 py-3 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-5 py-3.5 bg-white border border-gray-200 rounded-xl text-[#1E293B] placeholder-gray-400 focus:ring-2 focus:ring-royal-500 focus:border-transparent outline-none transition-all"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-200 mb-2">
+                <label className="block text-sm font-medium text-[#1E293B] mb-2">
                   Role
                 </label>
                 <select
                   value={selectedRole}
                   onChange={(e) => setSelectedRole(e.target.value)}
-                  className="w-full px-5 py-3 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-5 py-3.5 bg-white border border-gray-200 rounded-xl text-[#1E293B] focus:ring-2 focus:ring-royal-500 focus:border-transparent outline-none transition-all"
                   required
                 >
-                  <option value="" className="text-gray-900">Select your role</option>
+                  <option value="">Select your role</option>
                   {roles.map((role) => (
-                    <option key={role.id} value={role.id} className="text-gray-900">
+                    <option key={role.id} value={role.id}>
                       {role.name}
                     </option>
                   ))}
@@ -145,7 +147,7 @@ export default function Login() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="bg-red-500/20 backdrop-blur border border-red-500/50 text-red-200 px-4 py-3 rounded-xl text-sm"
+                  className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm"
                 >
                   {error}
                 </motion.div>
@@ -156,7 +158,7 @@ export default function Login() {
                 disabled={isLoading || !username || !password || !selectedRole}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium hover:from-indigo-700 hover:to-purple-700 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg"
+                className="w-full py-3.5 bg-gradient-to-r from-royal-500 to-royal-600 text-white rounded-xl font-semibold hover:from-royal-600 hover:to-royal-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg"
               >
                 {isLoading ? (
                   <>
@@ -171,19 +173,9 @@ export default function Login() {
                 )}
               </motion.button>
             </form>
-
-            {/* Demo Credentials */}
-            <div className="mt-6 text-center">
-              <p className="text-xs text-gray-400 mb-2">Demo Credentials:</p>
-              <div className="inline-flex flex-wrap gap-3 justify-center text-xs text-gray-300 bg-white/5 backdrop-blur px-4 py-2 rounded-xl border border-white/10">
-                <span><strong>Student:</strong> student / password</span>
-                <span><strong>Warden:</strong> warden / password</span>
-                <span><strong>Admin:</strong> admin / password</span>
-              </div>
-            </div>
           </motion.div>
 
-          {/* Feature Icons */}
+          {/* Feature Cards */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -196,11 +188,12 @@ export default function Login() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4 + index * 0.1 }}
-                className="glass-dark rounded-xl p-4 text-center"
+                whileHover={{ scale: 1.05 }}
+                className="bg-white/90 backdrop-blur-sm border-2 border-royal-200 rounded-xl p-4 text-center"
               >
-                <feature.icon className="w-6 h-6 text-indigo-400 mx-auto mb-2" />
-                <h3 className="text-sm font-medium text-white mb-1">{feature.title}</h3>
-                <p className="text-xs text-gray-400">{feature.description}</p>
+                <feature.icon className="w-6 h-6 text-royal-600 mx-auto mb-2" />
+                <h3 className="text-sm font-semibold text-[#1E293B] mb-1">{feature.title}</h3>
+                <p className="text-xs text-gray-500">{feature.description}</p>
               </motion.div>
             ))}
           </motion.div>
