@@ -8,7 +8,7 @@ import {
   CheckCircle,
   Clock,
   Home,
-  BriefcaseMedical,
+  Briefcase,
   User,
   MapPin
 } from 'lucide-react'
@@ -29,7 +29,7 @@ export default function LeaveForm() {
 
   const leaveReasons = [
     { id: 'family', name: 'Family Function', icon: Home, color: 'from-blue-500 to-blue-600' },
-    { id: 'medical', name: 'Medical', icon: BriefcaseMedical, color: 'from-red-500 to-red-600' },
+    { id: 'medical', name: 'Medical', icon: Briefcase, color: 'from-red-500 to-red-600' },
     { id: 'personal', name: 'Personal', icon: User, color: 'from-purple-500 to-purple-600' },
     { id: 'travel', name: 'Travel', icon: MapPin, color: 'from-green-500 to-green-600' },
   ]
