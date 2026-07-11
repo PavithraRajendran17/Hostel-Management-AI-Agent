@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
-import { Send, Bot, User, LogOut, MessageSquare } from 'lucide-react'
+import { Send, Bot, User, ArrowLeft, MoreVertical, Phone, Video, Smile, Paperclip } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { mockAIService, mockComplaintService, mockLeaveService } from '../services/mockService'
 
 export default function StudentChat() {
@@ -8,7 +9,8 @@ export default function StudentChat() {
     {
       id: 1,
       type: 'bot',
-      content: 'Hello! I\'m your Hostel AI Assistant. How can I help you today? You can report complaints or request leave.'
+      content: 'Hello! I\'m your Hostel AI Assistant. How can I help you today? You can report complaints or request leave.',
+      timestamp: new Date()
     }
   ])
   const [inputMessage, setInputMessage] = useState('')
@@ -30,7 +32,8 @@ export default function StudentChat() {
     const userMessage = {
       id: messages.length + 1,
       type: 'user',
-      content: inputMessage
+      content: inputMessage,
+      timestamp: new Date()
     }
 
     setMessages([...messages, userMessage])
@@ -39,13 +42,11 @@ export default function StudentChat() {
     setIsTyping(true)
 
     try {
-      // Use mock AI service to parse input
       const parsedResult = await mockAIService.parseUserInput(currentInput)
       
       let botResponseContent = ''
 
       if (parsedResult.intent === 'COMPLAINT') {
-        // Create complaint using mock service
         await mockComplaintService.createComplaint({
           studentName: 'Current Student',
           rollNumber: 'CS001',
@@ -55,7 +56,6 @@ export default function StudentChat() {
         })
         botResponseContent = `I've registered your ${parsedResult.category.toLowerCase()} complaint with ${parsedResult.priority} priority. The warden will review it shortly. Reference ID: ${Date.now()}`
       } else if (parsedResult.intent === 'LEAVE_REQUEST') {
-        // Create leave request using mock service
         await mockLeaveService.createLeaveRequest({
           studentName: 'Current Student',
           rollNumber: 'CS001',
@@ -73,14 +73,16 @@ export default function StudentChat() {
       const botResponse = {
         id: messages.length + 2,
         type: 'bot',
-        content: botResponseContent
+        content: botResponseContent,
+        timestamp: new Date()
       }
       setMessages(prev => [...prev, botResponse])
     } catch (error) {
       const botResponse = {
         id: messages.length + 2,
         type: 'bot',
-        content: 'Sorry, I encountered an error processing your request. Please try again.'
+        content: 'Sorry, I encountered an error processing your request. Please try again.',
+        timestamp: new Date()
       }
       setMessages(prev => [...prev, botResponse])
     } finally {
@@ -95,136 +97,151 @@ export default function StudentChat() {
     }
   }
 
-  const handleLogout = () => {
-    navigate('/login')
+  const formatTime = (date) => {
+    return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-primary-600 p-2 rounded-lg">
-              <MessageSquare className="w-6 h-6 text-white" />
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      {/* WhatsApp-style Header */}
+      <header className="bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 shadow-lg">
+        <div className="flex items-center gap-4">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => navigate('/student/dashboard')}
+            className="text-white"
+          >
+            <ArrowLeft className="w-6 h-6" />
+          </motion.button>
+          
+          <div className="flex items-center gap-3 flex-1">
+            <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
+              <Bot className="w-5 h-5 text-white" />
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Hostel AI Assistant</h1>
-              <p className="text-sm text-gray-500">Student Chat Interface</p>
+            <div className="flex-1">
+              <h1 className="text-white font-semibold">Hostel AI Assistant</h1>
+              <p className="text-indigo-200 text-xs">Online • Smart Chatbot</p>
             </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <LogOut className="w-5 h-5" />
-            <span>Logout</span>
-          </button>
+
+          <div className="flex items-center gap-2">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-2 text-white/80 hover:text-white transition-colors"
+            >
+              <Video className="w-5 h-5" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-2 text-white/80 hover:text-white transition-colors"
+            >
+              <Phone className="w-5 h-5" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-2 text-white/80 hover:text-white transition-colors"
+            >
+              <MoreVertical className="w-5 h-5" />
+            </motion.button>
+          </div>
         </div>
       </header>
 
-      {/* Main Chat Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col">
-        <div className="flex-1 bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden flex flex-col">
-          {/* Messages Container */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex items-start gap-3 ${
-                  message.type === 'user' ? 'flex-row-reverse' : ''
-                }`}
-              >
-                <div
-                  className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                    message.type === 'user'
-                      ? 'bg-primary-600'
-                      : 'bg-green-500'
-                  }`}
-                >
-                  {message.type === 'user' ? (
-                    <User className="w-5 h-5 text-white" />
-                  ) : (
-                    <Bot className="w-5 h-5 text-white" />
-                  )}
-                </div>
-                <div
-                  className={`max-w-[70%] px-4 py-3 rounded-2xl ${
-                    message.type === 'user'
-                      ? 'bg-primary-600 text-white rounded-br-sm'
-                      : 'bg-gray-100 text-gray-900 rounded-bl-sm'
-                  }`}
-                >
-                  <p className="text-sm leading-relaxed">{message.content}</p>
-                </div>
-              </div>
-            ))}
-            {isTyping && (
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-white" />
-                </div>
-                <div className="bg-gray-100 px-4 py-3 rounded-2xl rounded-bl-sm">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100" />
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200" />
-                  </div>
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
+      {/* Chat Area */}
+      <main className="flex-1 overflow-hidden flex flex-col bg-[#e5ddd5]">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        }} />
 
-          {/* Input Area */}
-          <div className="border-t border-gray-200 p-4 bg-gray-50">
-            <div className="flex gap-3">
-              <textarea
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 relative z-10">
+          {messages.map((message, index) => (
+            <motion.div
+              key={message.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className={`max-w-[75%] ${message.type === 'user' ? 'order-2' : 'order-1'}`}>
+                <div
+                  className={`px-4 py-2 shadow-sm ${
+                    message.type === 'user'
+                      ? 'bg-[#dcf8c6] rounded-2xl rounded-tr-sm'
+                      : 'bg-white rounded-2xl rounded-tl-sm'
+                  }`}
+                >
+                  <p className="text-sm text-gray-800 leading-relaxed">{message.content}</p>
+                </div>
+                <p className={`text-xs text-gray-500 mt-1 ${message.type === 'user' ? 'text-right' : 'text-left'}`}>
+                  {formatTime(message.timestamp)}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+
+          {isTyping && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex justify-start"
+            >
+              <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
+                <div className="flex gap-1">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100" />
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200" />
+                </div>
+              </div>
+            </motion.div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input Area */}
+        <div className="bg-gray-200 px-4 py-3">
+          <div className="flex items-center gap-3">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-2 text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              <Smile className="w-6 h-6" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-2 text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              <Paperclip className="w-6 h-6" />
+            </motion.button>
+            
+            <div className="flex-1">
+              <input
+                type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Type your message here... (e.g., 'I want to report a complaint about the AC' or 'I need leave from tomorrow to next Monday')"
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none transition-all"
-                rows={2}
+                placeholder="Type a message..."
+                className="w-full px-4 py-3 bg-white rounded-full outline-none text-sm shadow-sm"
               />
-              <button
-                onClick={handleSendMessage}
-                disabled={!inputMessage.trim() || isTyping}
-                className="px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2 font-medium"
-              >
-                <Send className="w-5 h-5" />
-                <span>Send</span>
-              </button>
             </div>
-            <p className="text-xs text-gray-500 mt-2">
-              Press Enter to send, Shift + Enter for new line
-            </p>
-          </div>
-        </div>
 
-        {/* Quick Actions */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button
-            onClick={() => setInputMessage('I want to report a complaint about the electrical issue in my room')}
-            className="p-4 bg-white rounded-xl border border-gray-200 hover:border-primary-500 hover:shadow-md transition-all text-left"
-          >
-            <h3 className="font-semibold text-gray-900 mb-1">Report Complaint</h3>
-            <p className="text-sm text-gray-500">Report maintenance or facility issues</p>
-          </button>
-          <button
-            onClick={() => setInputMessage('I need to request leave from tomorrow for 3 days to visit my family')}
-            className="p-4 bg-white rounded-xl border border-gray-200 hover:border-primary-500 hover:shadow-md transition-all text-left"
-          >
-            <h3 className="font-semibold text-gray-900 mb-1">Request Leave</h3>
-            <p className="text-sm text-gray-500">Submit a leave request for approval</p>
-          </button>
-          <button
-            onClick={() => setInputMessage('What is the status of my previous requests?')}
-            className="p-4 bg-white rounded-xl border border-gray-200 hover:border-primary-500 hover:shadow-md transition-all text-left"
-          >
-            <h3 className="font-semibold text-gray-900 mb-1">Check Status</h3>
-            <p className="text-sm text-gray-500">View status of your requests</p>
-          </button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={handleSendMessage}
+              disabled={!inputMessage.trim() || isTyping}
+              className="p-3 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full text-white shadow-lg hover:shadow-xl transition-all disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed"
+            >
+              <Send className="w-5 h-5" />
+            </motion.button>
+          </div>
         </div>
       </main>
     </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { User, Shield, GraduationCap, Lock, ArrowRight } from 'lucide-react'
+import { User, Shield, GraduationCap, Lock, ArrowRight, MessageSquare, FileText, Calendar, CheckCircle } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { mockAuthService } from '../services/mockService'
 
 export default function Login() {
@@ -12,33 +13,17 @@ export default function Login() {
   const [error, setError] = useState('')
 
   const roles = [
-    {
-      id: 'student',
-      name: 'Student',
-      icon: GraduationCap,
-      description: 'Access chat assistant to report complaints and request leave',
-      color: 'from-blue-500 to-blue-600'
-    },
-    {
-      id: 'warden',
-      name: 'Warden',
-      icon: Shield,
-      description: 'Manage complaints and approve leave requests',
-      color: 'from-purple-500 to-purple-600'
-    },
-    {
-      id: 'admin',
-      name: 'Admin',
-      icon: Lock,
-      description: 'Full system access and configuration',
-      color: 'from-gray-600 to-gray-700'
-    }
+    { id: 'student', name: 'Student' },
+    { id: 'warden', name: 'Warden' },
+    { id: 'admin', name: 'Admin' }
   ]
 
-  const handleRoleSelect = (role) => {
-    setSelectedRole(role)
-    setError('')
-  }
+  const features = [
+    { icon: MessageSquare, title: 'AI Assistant', description: 'Smart chatbot for instant help' },
+    { icon: FileText, title: 'Complaint Management', description: 'Easy complaint tracking' },
+    { icon: Calendar, title: 'Leave Management', description: 'Quick leave requests' },
+    { icon: CheckCircle, title: 'Secure Login', description: 'Safe authentication' }
+  ]
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -51,16 +36,15 @@ export default function Login() {
       const result = await mockAuthService.login(username, password, selectedRole)
       
       if (result.success) {
-        // Store token in localStorage (in real app, use proper auth handling)
         localStorage.setItem('authToken', result.token)
         localStorage.setItem('userRole', result.user.role)
         
         if (selectedRole === 'student') {
-          navigate('/student/chat')
+          navigate('/student/dashboard')
         } else if (selectedRole === 'warden') {
           navigate('/warden/dashboard')
         } else if (selectedRole === 'admin') {
-          navigate('/warden/dashboard') // Admin goes to warden dashboard for now
+          navigate('/admin/dashboard')
         }
       } else {
         setError('Invalid credentials. Please try again.')
@@ -73,125 +57,153 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-5xl">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl mb-4 shadow-lg">
-            <User className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Hostel Management AI Agent</h1>
-          <p className="text-lg text-gray-600">Select your role to continue</p>
-        </div>
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background Image with Overlay */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: 'url("https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80")'
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-indigo-900/50" />
+      </div>
 
-        {/* Role Selection */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {roles.map((role) => (
-            <button
-              key={role.id}
-              onClick={() => handleRoleSelect(role.id)}
-              className={`relative p-6 rounded-2xl border-2 transition-all duration-200 ${
-                selectedRole === role.id
-                  ? 'border-blue-500 bg-white shadow-lg scale-105'
-                  : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
-              }`}
-            >
-              <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br ${role.color} mb-4`}>
-                <role.icon className="w-6 h-6 text-white" />
+      {/* Content */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
+        <div className="w-full max-w-md">
+          {/* Glass Login Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="glass rounded-3xl p-8 shadow-2xl"
+          >
+            {/* Logo */}
+            <div className="text-center mb-8">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+                className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl mb-4 shadow-xl"
+              >
+                <User className="w-10 h-10 text-white" />
+              </motion.div>
+              <h1 className="text-3xl font-bold text-white mb-2">Hostel Management AI Agent</h1>
+              <p className="text-gray-300">Smart Hostel Management System</p>
+            </div>
+
+            {/* Login Form */}
+            <form onSubmit={handleLogin} className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter your username"
+                  className="w-full px-5 py-3 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                  required
+                />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">{role.name}</h3>
-              <p className="text-sm text-gray-600">{role.description}</p>
-              {selectedRole === role.id && (
-                <div className="absolute top-4 right-4 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white rounded-full" />
-                </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  className="w-full px-5 py-3 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  Role
+                </label>
+                <select
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(e.target.value)}
+                  className="w-full px-5 py-3 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                  required
+                >
+                  <option value="" className="text-gray-900">Select your role</option>
+                  {roles.map((role) => (
+                    <option key={role.id} value={role.id} className="text-gray-900">
+                      {role.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="bg-red-500/20 backdrop-blur border border-red-500/50 text-red-200 px-4 py-3 rounded-xl text-sm"
+                >
+                  {error}
+                </motion.div>
               )}
-            </button>
-          ))}
-        </div>
 
-        {/* Login Form */}
-        {selectedRole && (
-          <div className="max-w-md mx-auto">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-                Login as {roles.find(r => r.id === selectedRole)?.name}
-              </h2>
-              
-              <form onSubmit={handleLogin} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Enter your username"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                    required
-                  />
-                </div>
-
-                {error && (
-                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                    {error}
-                  </div>
+              <motion.button
+                type="submit"
+                disabled={isLoading || !username || !password || !selectedRole}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium hover:from-indigo-700 hover:to-purple-700 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Signing in...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Sign In</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </>
                 )}
+              </motion.button>
+            </form>
 
-                <button
-                  type="submit"
-                  disabled={isLoading || !username || !password}
-                  className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg"
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Logging in...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Login</span>
-                      <ArrowRight className="w-5 h-5" />
-                    </>
-                  )}
-                </button>
-              </form>
-
-              <div className="mt-6 text-center">
-                <button
-                  onClick={() => setSelectedRole('')}
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  Change role
-                </button>
+            {/* Demo Credentials */}
+            <div className="mt-6 text-center">
+              <p className="text-xs text-gray-400 mb-2">Demo Credentials:</p>
+              <div className="inline-flex flex-wrap gap-3 justify-center text-xs text-gray-300 bg-white/5 backdrop-blur px-4 py-2 rounded-xl border border-white/10">
+                <span><strong>Student:</strong> student / password</span>
+                <span><strong>Warden:</strong> warden / password</span>
+                <span><strong>Admin:</strong> admin / password</span>
               </div>
             </div>
-          </div>
-        )}
+          </motion.div>
 
-        {/* Demo Credentials */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-500 mb-2">Demo Credentials:</p>
-          <div className="inline-flex flex-wrap gap-4 justify-center text-xs text-gray-600 bg-white px-6 py-3 rounded-xl border border-gray-200">
-            <span><strong>Student:</strong> student / password</span>
-            <span><strong>Warden:</strong> warden / password</span>
-            <span><strong>Admin:</strong> admin / password</span>
-          </div>
+          {/* Feature Icons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="mt-8 grid grid-cols-2 gap-4"
+          >
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4 + index * 0.1 }}
+                className="glass-dark rounded-xl p-4 text-center"
+              >
+                <feature.icon className="w-6 h-6 text-indigo-400 mx-auto mb-2" />
+                <h3 className="text-sm font-medium text-white mb-1">{feature.title}</h3>
+                <p className="text-xs text-gray-400">{feature.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </div>
     </div>
